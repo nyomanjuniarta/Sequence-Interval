@@ -93,7 +93,7 @@ class Pattern:
                 return False
         return True
 
-    def __le__(self, p):
+    def __le__(self, p):  # larger interval is subsumed by smaller interval
         for seq1 in self.sequences:
             subsumed = False
             for seq2 in p.sequences:
@@ -110,7 +110,7 @@ class Pattern:
         for idx2 in xrange(0, len(seq2) - len(seq1) + 1):
             subseq = True
             for idx1 in xrange(0, len(seq1)):
-                if seq1[idx1][0] < seq2[idx2+idx1][0] or seq1[idx1][1] > seq2[idx2+idx1][1] or seq1[idx1][2] < seq2[idx2+idx1][2] or seq1[idx1][3] > seq2[idx2+idx1][3]:
+                if seq1[idx1][0] > seq2[idx2+idx1][0] or seq1[idx1][1] < seq2[idx2+idx1][1] or seq1[idx1][2] > seq2[idx2+idx1][2] or seq1[idx1][3] < seq2[idx2+idx1][3]:
                     subseq = False
                     break
             if subseq:

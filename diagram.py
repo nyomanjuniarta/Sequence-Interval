@@ -51,15 +51,18 @@ def add_object(object_concept_id, object_id, L, depth=1):
         add_object(j, object_id, L, depth+1)
 
 
-def add_intent(intent, generator_id, L):
-    generator = get_maximal_concept(intent, generator_id, L)
+def add_intent(intent, generator, L, tab):
+    #print print_tab(tab), 'add_intent(', intent, ',', generator, ')'
+    generator = get_maximal_concept(intent, generator, L)
+    #print print_tab(tab), 'generator', generator
     if generator != -1 and L.node[generator][intent_mark] == intent:
         return generator
     new_parents = []
     for candidate_id in L.neighbors(generator):
         if not L.node[candidate_id][intent_mark] <= intent:
+            #print print_tab(tab), 'candidate_id', candidate_id
             candidate_intent = L.node[candidate_id][intent_mark].intersect(intent)
-            candidate_id = add_intent(candidate_intent, candidate_id, L)
+            candidate_id = add_intent(candidate_intent, candidate_id, L, tab + 1)
         add_parent = True
         for parent in new_parents:
             if L.node[candidate_id][intent_mark] <= L.node[parent][intent_mark]:
@@ -70,10 +73,20 @@ def add_intent(intent, generator_id, L):
         if add_parent:
             new_parents.append(candidate_id)
     new_concept_id = len(L.nodes()) - 2
+    #print print_tab(tab), 'new_concept_id', new_concept_id
     L.add_node(new_concept_id, {extent_mark: copy.copy(L.node[generator][extent_mark]), intent_mark: intent, flag: True})
     for parent in new_parents:
         if parent in L[generator]:
             L.remove_edge(generator, parent)
         L.add_edge(new_concept_id, parent)
+        #print print_tab(tab), parent, 'parent of', new_concept_id
     L.add_edge(generator, new_concept_id)
+    #print print_tab(tab), new_concept_id, 'parent_of', generator
     return new_concept_id
+
+
+def print_tab(tab):
+    string_tab = ''
+    for i in xrange(tab):
+        string_tab += '  '
+    return string_tab

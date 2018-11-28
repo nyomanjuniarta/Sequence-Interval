@@ -15,8 +15,8 @@ if __name__ == "__main__":
         for object_id, line in enumerate(f):
             raw_entry = line.replace('\n', '').replace('\r', '').strip()
             pattern = Pattern(raw_entry, config=cfg, object=object_id)
-            print 'seqs ', pattern.sequences
-            object_concept_id = add_intent(pattern, -1, L)
+            print '\nseqs ', pattern.sequences
+            object_concept_id = add_intent(pattern, -1, L, 0)
             add_object(object_concept_id, object_id, L)
             clean_flags(L, object_concept_id)
 
